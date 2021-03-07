@@ -9,6 +9,7 @@ class MoviesController < ApplicationController
   def index
     @all_ratings = Movie.all_ratings
     
+    # Setting up sessions for cookies
     session[:ratings] = params[:ratings].keys if 
       params.has_key?(:ratings) && !params[:ratings].empty?
     
@@ -16,6 +17,14 @@ class MoviesController < ApplicationController
     
     session[:sort] = params[:sort] if params.has_key?(:sort)
     
+    # Styling sort to highlight yellow-orange when active
+    if session[:sort] == 'title'
+        ordering,@title = {:order => :title}, 'bg-warning hilite'
+    elsif session[:sort] == 'release_date'
+        ordering,@release_date = {:order => :release_date}, 'bg-warning hilite'
+    end
+    
+    # Sorting
     if session.has_key?(:sort)
       @movies = Movie.where(rating: @selected_ratings).order(session[:sort])
     else
